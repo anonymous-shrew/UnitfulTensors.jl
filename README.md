@@ -2,6 +2,7 @@
 
 *A package for working efficiently with arrays of physical quantities.*
 
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://anonymous-shrew.github.io/UnitfulTensors.jl/stable)
 [![Build Status](https://github.com/anonymous-shrew/UnitfulTensors.jl/workflows/CI/badge.svg)](https://github.com/anonymous-shrew/UnitfulTensors.jl/actions?query=workflow%3ACI)
 [![codecov.io](https://codecov.io/github/anonymous-shrew/UnitfulTensors.jl/branch/master/graph/badge.svg)](https://codecov.io/github/anonymous-shrew/UnitfulTensors.jl/branch/master)
 
