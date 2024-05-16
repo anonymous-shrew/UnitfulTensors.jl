@@ -218,3 +218,6 @@ as `AxisDimensions` objects and can be accessed via `normdims`.
   [Withopf](https://www.youtube.com/watch?v=aF3samjRzD4),
   [Withopf](https://meetingcpp.com/mcpp/slides/2021/Physical-units-for-matrices6397.pdf)
 - In the 90s: [Hart](https://www.georgehart.com/research/multanal.html)
+
+## Acknowledgements
+This work is supported by RSF grant #23-71-01123.
