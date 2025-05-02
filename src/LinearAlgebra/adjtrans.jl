@@ -46,7 +46,6 @@ dimensions(A::Union{Adjoint, Transpose}) = nodims(size(parent(A))...)'
 
 
 adjoint(A::AbstractVecOrMatDimensions) = AdjointAxesDimensions(A)
-adjoint(x::AbstractDimensions) = x
 adjoint(A::AdjointAxesDimensions) = parent(A)
 
 function adjoint!(dest::AbstractAxesDimensions, src::AbstractAxesDimensions)

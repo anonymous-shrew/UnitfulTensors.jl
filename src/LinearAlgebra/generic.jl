@@ -35,6 +35,8 @@ function tr(A::AbstractMatrixDimensions)
     end
 end
 
+tr(A::AbstractDimensions) = A # This would work automatically if AbstractDimensions <: Number
+
 function sylvester(A::AbstractMatrixDimensions, B::AbstractMatrixDimensions, C::AbstractMatrixDimensions)
     if dimscale(A) != dimscale(B) ||
         !issquareable(A) || !issquareable(B) ||

@@ -5,7 +5,7 @@
 @test UnitfulScalar <: AbstractUnitfulScalar
 @test UnitfulTensor <: AbstractUnitfulTensor
 
-@test AbstractDimensions <: Number
+@test AbstractDimensions <: Number broken=true
 @test AbstractUnitfulScalar <: Number
 @test AbstractAxisDimensions <: AbstractVector
 @test AbstractAxesDimensions <: AbstractArray

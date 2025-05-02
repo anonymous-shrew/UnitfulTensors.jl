@@ -1,10 +1,12 @@
 module FastQuantities
 
 using Unitful: Unitful, Dimension, Dimensions
-import Base: ==, ≈, one, *, /, ^, inv, sqrt, log, convert, show, values
+using DynamicQuantities: Quantity
+import DynamicQuantities
+import Base: ≈, log, convert, show, values, length, iterate, ndims, broadcastable
 
-export AbstractDimensions, SIDimensions, 
-       AbstractUnitfulScalar, UnitfulScalar,
+export AbstractDimensions, SIDimensions,
+       AbstractUnitfulScalar, UnitfulScalar, Quantity,
        NoDims, 𝐓, 𝐋, 𝐌, 𝐈, 𝚯, 𝐍, 𝐉,
        dimexps, value, dimensions,
        @u_str
@@ -12,11 +14,13 @@ export AbstractDimensions, SIDimensions,
 allmap(f, xs...) = allequal(length(x) for x in xs) && all(Iterators.map(f, xs...))
 
 """
-    AbstractDimensions
+    AbstractDimensions{R}
 
-Abstract type representing the dimensions of a physical quantity.
+Abstract type representing the dimensions of a physical quantity. R is the type of dimensional exponents.
+
+Alias for `DynamicQuantities.AbstractDimensions`.
 """
-abstract type AbstractDimensions <: Number end
+const AbstractDimensions = DynamicQuantities.AbstractDimensions
 
 """
     dimexps(x::AbstractDimensions)
@@ -28,19 +32,10 @@ time, length, mass, current, temperature, amount, luminous intensity.
 """
 dimexps(x::AbstractDimensions) = x.exps
 
-show(io::IO, x::AbstractDimensions) = show(io, convert(Dimensions, x))
+show(io::IO, x::AbstractDimensions{<:Number}) = show(io, convert(Dimensions, x)) # without <:Number this would overwrite a method from DynamicQuantities and break precompilation
 
-==(x::T, y::T) where T <: AbstractDimensions = dimexps(x) == dimexps(y)
 ≈(x::T, y::T) where T <: AbstractDimensions = allmap((ξ, η) -> ≈(ξ, η; atol = 2*sqrt(eps(Float32))),
                                                      dimexps(x), dimexps(y))
-*(x::T, y::T) where T <: AbstractDimensions = T(dimexps(x) .+ dimexps(y))
-/(x::T, y::T) where T <: AbstractDimensions = T(dimexps(x) .- dimexps(y))
-^(x::T, y::Number) where T <: AbstractDimensions = T(dimexps(x) .* y)
-^(x::T, y::Integer) where T <: AbstractDimensions = T(dimexps(x) .* y) # to resolve method ambiguity
-^(x::T, y::Rational) where T <: AbstractDimensions = T(dimexps(x) .* y) # to resolve method ambiguity
-inv(x::T) where T <: AbstractDimensions = T((-).(dimexps(x)))
-sqrt(x::AbstractDimensions) = x^(1//2)
-
 function log(x::AbstractDimensions)
     if x == one(x)
         return one(x)
@@ -50,17 +45,25 @@ function log(x::AbstractDimensions)
     end
 end
 
+length(x::AbstractDimensions) = 1
+iterate(x::AbstractDimensions) = (x, nothing)
+iterate(x::AbstractDimensions, ::Any) = nothing
+ndims(x::AbstractDimensions) = 0
+broadcastable(x::AbstractDimensions) = Ref(x)
+
 """
-    SIDimensions
+    SIDimensions <: AbstractDimensions{Float32}
 
 Concrete type storing the dimensions of a physical quantity as 7 `Float32` exponents
 of SI base units.
-"""
-struct SIDimensions <: AbstractDimensions
-    exps::NTuple{7, Float32}
-end
 
-one(::Type{SIDimensions}) = SIDimensions(ntuple(_ -> 0, 7))
+Alias for `DynamicQuantities.Dimensions{Float32}`.
+"""
+const SIDimensions = DynamicQuantities.Dimensions{Float32}
+
+const DynamicQuantitiesBaseNames = (:time, :length, :mass, :current, :temperature, :amount, :luminosity)
+SIDimensions(exps::NTuple{7}) = SIDimensions(; Pair.(DynamicQuantitiesBaseNames, exps)...)
+dimexps(x::SIDimensions) = getproperty.(x, DynamicQuantitiesBaseNames)
 
 """
     NoDims
@@ -70,13 +73,10 @@ Physical dimensions of a dimensionless quantity.
 const NoDims = one(SIDimensions)
 
 const UnitfulBaseDims = (Unitful.𝐓, Unitful.𝐋, Unitful.𝐌, Unitful.𝐈, Unitful.𝚯, Unitful.𝐍, Unitful.𝐉)
-const UnitfulBaseNames = UnitfulBaseDims .|> (((::Dimensions{D}) where D) -> D[1]) .|> Unitful.name
 
-SIDimensions(x::Dimension{T}) where T = SIDimensions(Unitful.power(x) .* (Unitful.name(x) .== UnitfulBaseNames))
-SIDimensions(x::Dimensions{D}) where D = prod(SIDimensions.(D), init=NoDims)
+SIDimensions(x::Dimensions) = convert(SIDimensions, x)
 
 convert(::Type{Dimensions}, x::SIDimensions) = prod(UnitfulBaseDims .^ dimexps(x))
-convert(::Type{SIDimensions}, x::Dimensions) = SIDimensions(x)
 
 𝐓, 𝐋, 𝐌, 𝐈, 𝚯, 𝐍, 𝐉 = SIDimensions.(UnitfulBaseDims)
 
@@ -85,8 +85,10 @@ convert(::Type{SIDimensions}, x::Dimensions) = SIDimensions(x)
 
 Abstract type representing a scalar physical quantity
 with a numerical value of type `TV` and physical dimensions of type `TD`.
+
+Alias for `DynamicQuantities.AbstractQuantity{TV, TD} where {TV, TD<:AbstractDimensions}`.
 """
-abstract type AbstractUnitfulScalar{TV, TD<:AbstractDimensions} <: Number end
+const AbstractUnitfulScalar = DynamicQuantities.AbstractQuantity{TV, TD} where {TV, TD<:AbstractDimensions}
 
 """
     value(x::AbstractUnitfulScalar)
@@ -105,7 +107,7 @@ Get the physical dimensions of an [`AbstractUnitfulScalar`](@ref).
 
 See also: [`value`](@ref).
 """
-dimensions(x::AbstractUnitfulScalar) = x.dims
+dimensions(x::AbstractUnitfulScalar) = x.dimensions
 
 """
     values(x::AbstractUnitfulScalar)
@@ -121,17 +123,17 @@ dimensions(x::Number) = NoDims
 # values(x::Number) works as intended because of the values(itr) = itr definition in Base
 
 show(io::IO, x::AbstractUnitfulScalar) = show(io, value(x) * Unitful.upreferred(convert(Dimensions, dimensions(x))))
+show(io::IO, x::AbstractUnitfulScalar{<:Real}) = show(io, value(x) * Unitful.upreferred(convert(Dimensions, dimensions(x)))) # resolving ambiguity with DynamicQuantities
 
 """
-    UnitfulScalar{TV, TD<:AbstractDimensions} <: AbstractUnitfulScalar{TV, TD}
+    UnitfulScalar{TV<:Number, TD<:AbstractDimensions} <: AbstractUnitfulScalar{TV, TD}
 
 Concrete type representing a scalar physical quantity
 with a numerical value of type `TV` and physical dimensions of type `TD`.
+
+Alias for `DynamicQuantities.Quantity`.
 """
-struct UnitfulScalar{TV, TD<:AbstractDimensions} <: AbstractUnitfulScalar{TV, TD}
-    value::TV
-    dims::TD
-end
+const UnitfulScalar = DynamicQuantities.Quantity
 
 macro u_str(str)
     quote
@@ -141,5 +143,8 @@ macro u_str(str)
         UnitfulScalar(val, dims)
     end
 end
+
+# fixes the printing of type aliases, https://github.com/JuliaLang/julia/issues/40448
+Base.modulesof!(s::Set{Module}, x::Type{<:Union{SIDimensions, AbstractUnitfulScalar}}) = (push!(s, @__MODULE__); s)
 
 end # of module

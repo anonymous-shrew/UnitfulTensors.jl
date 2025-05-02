@@ -71,6 +71,6 @@ for f in (:issquareable, :isendomorphic)
 end
 
 for f in (:ishomogeneous, )
-    @eval $f(A::Union{AbstractArray{<:Number}, Number}) = true
-    @eval $f(A::Union{AbstractArray{<:Number}, Number}, d::Integer) = true
+    @eval $f(A::Union{AbstractArray{<:Number}, Number, AbstractDimensions}) = true
+    @eval $f(A::Union{AbstractArray{<:Number}, Number, AbstractDimensions}, d::Integer) = true
 end

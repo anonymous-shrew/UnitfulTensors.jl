@@ -31,7 +31,6 @@ Not implemented yet:
 Future plans:
 - Add support for frames of reference
 - Further optimizations: NoAxisDimensions, InverseAxisDimensions, memoization
-- Replace `FastQuantities` with [DynamicQuantities.jl](https://github.com/SymbolicML/DynamicQuantities.jl)
 - [Tullio.jl](https://github.com/mcabbott/Tullio.jl)/[TensorCast.jl](https://github.com/mcabbott/TensorCast.jl) integration
 
 ## Basic usage

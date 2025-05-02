@@ -27,7 +27,6 @@ Not implemented yet:
 Future plans:
 - Add support for frames of reference
 - Further optimizations: NoAxisDimensions, InverseAxisDimensions, memoization
-- Replace `FastQuantities` with [DynamicQuantities.jl](https://github.com/SymbolicML/DynamicQuantities.jl)
 - [Tullio.jl](https://github.com/mcabbott/Tullio.jl)/[TensorCast.jl](https://github.com/mcabbott/TensorCast.jl) integration
 
 ## Basic usage
@@ -187,11 +186,10 @@ It stores units in type parameters in an attempt to move
 unit computation to the compilation stage.
 This doesn't work well in the case of dimensionally heterogeneous arrays.
 
-UnitfulTensors.jl has a FastQuantities submodule,
-which defines a type [`SIDimensions`](@ref),
-which stores the physical dimensions of a [`UnitfulScalar`](@ref)
-as 7 `Float32` numbers. The speedup is noticeable:
-  
+UnitfulTensors.jl uses [DynamicQuantities.jl](https://github.com/SymbolicML/DynamicQuantities.jl)
+instead, which stores the physical dimensions of a [`UnitfulScalar`](@ref)
+as 7 numbers. The speedup is noticeable:
+
 ```julia
 using UnitfulTensors, BenchmarkTools
 using Unitful: @u_str as @uf_str
@@ -201,17 +199,17 @@ N = 1000
 u = [1. * u"s"^i for i in 1:N]
 v = [1. * uf"s"^i for i in 1:N] 
 
-println("FastQuantities")
+println("UnitfulTensors.jl / DynamicQuantities.jl")
 @btime $u .* $u
 println("Unitful.jl")
 @btime $v .* $v
 
 # output
 
-FastQuantities
-  4.073 μs (2 allocations: 39.11 KiB)
+UnitfulTensors.jl / DynamicQuantities.jl
+  3.891 μs (3 allocations: 39.12 KiB)
 Unitful.jl
-  1.735 ms (1024 allocations: 32.44 KiB)
+  1.077 ms (1030 allocations: 32.39 KiB)
 ```
 
 ## Brief API overview

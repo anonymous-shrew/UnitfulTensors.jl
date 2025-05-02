@@ -306,6 +306,11 @@ end
 
 kron(A::AdjointAxesDimensions, B::AdjointAxesDimensions) = kron(A', B')'
 
+# This would work automatically when AbstractDimensions <: Number
+kron(A::AbstractDimensions, B::AbstractDimensions) = A * B
+kron(A::AbstractDimensions, B::Union{AbstractDimensions, AbstractVecOrMat}) = A * B
+kron(A::AbstractVecOrMat, B::AbstractDimensions) = A * B
+
 for T2 in (Integer, Real, Number)
     @eval function (^)(A::AbstractMatrixDimensions, p::$T2)
         scaleA, dims... = dimsplat(A)

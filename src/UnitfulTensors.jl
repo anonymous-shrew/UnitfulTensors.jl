@@ -65,7 +65,7 @@ import SparseArrays: sparse # sparse.jl
        
 export # FastQuantities.jl
        AbstractDimensions, SIDimensions, 
-       AbstractUnitfulScalar, UnitfulScalar,
+       AbstractUnitfulScalar, UnitfulScalar, Quantity,
        NoDims, 𝐓, 𝐋, 𝐌, 𝐈, 𝚯, 𝐍, 𝐉,
        dimexps, value, values, dimensions,
        @u_str,
