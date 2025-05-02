@@ -334,7 +334,7 @@ julia> V = values(A)
 
 julia> D = dimensions(A)
 2×2 AxesDimensions{2, SIDimensions}:
-     NoDims        𝐓^-1
+ NoDims      𝐓^-1
  𝐋^2 𝐌 𝐓^-2  𝐋^2 𝐌 𝐓^-3
 
 julia> A == UnitfulTensor(V, D)
