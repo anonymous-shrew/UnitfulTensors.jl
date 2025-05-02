@@ -1,6 +1,6 @@
 # A promotion system that enables mixing UnitfulTensors and Arrays of Numbers in arithmetic operations
 
-promote_rule(::Type{T}, ::Type{<:Number}) where T <: AbstractUnitfulScalar = T
+# promote_rule(::Type{T}, ::Type{<:Number}) where T <: AbstractUnitfulScalar = T
 (::Type{T})(x::Number) where T <: UnitfulScalar = T(x, NoDims)
 
 promote_unitful(f::Union{Function, Type},
