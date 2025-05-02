@@ -135,6 +135,8 @@ Alias for `DynamicQuantities.Quantity`.
 """
 const UnitfulScalar = DynamicQuantities.Quantity
 
+UnitfulScalar{T, D}(val, dims) where {T<:Number,D<:AbstractDimensions} = UnitfulScalar(convert(T, val), convert(D, dims))
+
 macro u_str(str)
     quote
         unit = Unitful.@u_str($str)
