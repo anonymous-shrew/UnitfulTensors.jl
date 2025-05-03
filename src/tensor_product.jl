@@ -10,7 +10,7 @@ If the argument list may be empty, the init keyword must be supplied
 `⊗` can be used as a shorthand.
 
 # Examples:
-```jldoctest
+```jldoctest; setup = :(using UnitfulTensors)
 julia> 𝐋 ⊗ AxisDimensions([NoDims, 𝐌]) ⊗ AxisDimensions([NoDims, 𝐓])
 2×2 AxesDimensions{2, SIDimensions}:
  𝐋    𝐋 𝐓

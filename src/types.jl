@@ -197,7 +197,7 @@ AxesDimensions(A::AbstractArray{<:AbstractDimensions}) = _get_single_index(A, ea
 Create [`AxesDimensions`](@ref) representing the physical dimensions of a
 dimensionless array of size `size`.
 # Examples
-```jldoctest
+```jldoctest; setup = :(using UnitfulTensors)
 julia> nodims(2, 3)
 2×3 AxesDimensions{2, SIDimensions}:
  NoDims  NoDims  NoDims
@@ -320,7 +320,7 @@ The physical dimensions of `A` must factorize into a tensor product of dimension
 multilinear algebra and will throw an error when attempting to convert them to a [`UnitfulTensor`](@ref).
 
 # Examples:
-```jldoctest
+```jldoctest; setup = :(using UnitfulTensors)
 julia> A = UnitfulTensor([1.0     2.0u"s^-1"
                           3.0u"J" 4.0u"W"   ])
 2×2 UnitfulMatrix{Float64, SIDimensions, Matrix{Float64}, AxesDimensions{2, SIDimensions}}:
@@ -352,7 +352,7 @@ julia> inv(V)
 ```
 """
 function UnitfulTensor(A::AbstractArray)
-    vals = value.(A); dims = dimensions.(A)
+    vals = map(value, A); dims = map(dimensions, A)
     return UnitfulTensor(vals, AxesDimensions(dims))
 end
 
