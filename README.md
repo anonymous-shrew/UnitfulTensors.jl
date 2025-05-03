@@ -13,6 +13,7 @@ Currently it is experimental and mostly focused on linear algebra.
 - Support for arrays with mixed units
 - Indexing and assignment: scalar indices, multidimensional indices, logical indexing, omitted/trailing singleton dimensions
 - Arithmetic: +, -, *, \\, /, ^, sqrt, dot, cross, kron, inv, pinv, lmul!, rmul!, ldiv!, rdiv!
+- Elementwise operations
 - Transcendental functions of matrices
 - adjoint, transpose
 - det, logdet, logabsdet, tr
@@ -26,7 +27,6 @@ Currently it is experimental and mostly focused on linear algebra.
 
 Not implemented yet:
 - General array manipulation: hcat, vcat, repeat, reshape, permutedims, sort, etc.
-- Elementwise operations
 
 Future plans:
 - Add support for frames of reference
