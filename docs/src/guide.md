@@ -71,6 +71,39 @@ or using [`nodims`](@ref) and scalar multiplication
 
 for dimensionally homogeneous [`UnitfulTensor`](@ref)s.
 
+## Elementwise operations
+
+Elementwise mathematical functions (at least those that can be
+expanded in a Taylor series) preserve the tensor product
+structure of [`AxesDimensions`](@ref), so this package
+modifies broadcasting to return [`UnitfulTensor`](@ref)s
+when the broadcasted expression involves
+[`UnitfulScalar`](@ref)s or [`UnitfulTensor`](@ref)s:
+
+```jldoctest; setup = :(using UnitfulTensors)
+julia> 1u"m" .* [1 2; 3 4]
+2×2 UnitfulMatrix{Float64, SIDimensions, Matrix{Float64}, AxesDimensions{2, SIDimensions}}:
+ 1.0 m  2.0 m
+ 3.0 m  4.0 m
+```
+
+User-defined functions also can be used:
+
+```jldoctest; setup = :(using UnitfulTensors)
+julia> A = UnitfulTensor([1u"m" 2u"m"; 3u"m" 4u"m"])
+       B = UnitfulTensor([4u"s" 3u"s"; 2u"s" 1u"s"])
+       f(x) = x + 2u"m^2/s"
+       @. f(A^2 / B)
+2×2 UnitfulMatrix{Float64, SIDimensions, Matrix{Float64}, AxesDimensions{2, SIDimensions}}:
+ 2.25 m^2 s^-1  3.33333 m^2 s^-1
+  6.5 m^2 s^-1     18.0 m^2 s^-1
+```
+
+This works for usual mathematical functions from
+[`UnitfulScalar`](@ref)s to [`UnitfulScalar`](@ref)s.
+For something like `f(x) = (dimensions(x) == NoDims)`
+use `map(f, A)` instead.
+
 ## Defining functions of UnitfulTensors
 
 Functions of [`UnitfulTensor`](@ref)s generally

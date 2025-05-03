@@ -77,31 +77,30 @@ end
 end
 
 # _get_single_index and related functions can be used to convert
-# AbstractArray{<:AbstractDimensions} into AbstractAxesDimensions,
-# so they should accept AbstractDimensionsArray, not only AbstractAxesDimensions
-const AbstractDimensionsArray = AbstractArray{<:AbstractDimensions}
+# AbstractArray{<:AbstractDimensions} and Broadcasted into AbstractAxesDimensions,
+# so they should accept anything, not only AbstractAxesDimensions
 
-@inline function _get_single_index(A::AbstractDimensionsArray, I::Union{Real, AbstractArray})
+@inline function _get_single_index(A, I::Union{Real, AbstractArray}; unsafe=false)
     isempty(I) && return nodims(size(I)...)
     scale = A[first(I)]
     dims = _getAxesDims(A, I)
     T = promote_dims(_get_single_index, (dims, scale), A)
     dest = T(dims, scale)
-    return _setindex_rest!(dest, A, I)
+    return unsafe ? dest : _setindex_rest!(dest, A, I)
 end
 
-_setindex_rest!(dest::AbstractAxesDimensions{0}, A::AbstractDimensionsArray,
+_setindex_rest!(dest::AbstractAxesDimensions{0}, A,
     I::Union{Real, AbstractArray{<:Any, 0}}) = dest
-_setindex_rest!(dest::AbstractVectorDimensions, A::AbstractDimensionsArray, I::AbstractVector) = dest
-_setindex_rest!(dest::AbstractAxesDimensions, A::AbstractDimensionsArray,
+_setindex_rest!(dest::AbstractVectorDimensions, A, I::AbstractVector) = dest
+_setindex_rest!(dest::AbstractAxesDimensions, A,
     I::Union{Real, AbstractArray}) = _unsafe_getindex!(dest, A, I)
 
-@inline function _getAxesDims(A::AbstractDimensionsArray, I::Union{Real, AbstractArray})
+@inline function _getAxesDims(A, I::Union{Real, AbstractArray})
     @inline f(dims) = _getAxisDims(A, first(eachslice(I, dims = dims)))
     return map(f, _N_but_one(ndims(I)))
 end
 
-function _getAxisDims(A::AbstractDimensionsArray, I::AbstractVector)
+function _getAxisDims(A, I::AbstractVector)
     scale = isempty(I) ? one(eltype(A)) : _getindex_normdims(A, first(I))
     shape = index_shape(I)
     newdims = similar(A, shape)
@@ -122,7 +121,7 @@ function _getindex_normdims(A::AbstractAxesDimensions, I)
     return _prod(getindex.(dims, inds); init = one(eltype(A)))
 end
 
-_getindex_normdims(A::AbstractDimensionsArray, I) = A[I]
+_getindex_normdims(A, I) = A[I]
 
 
 

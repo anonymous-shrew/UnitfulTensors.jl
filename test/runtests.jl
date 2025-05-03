@@ -18,7 +18,7 @@ end
 
 function values(x::AbstractUnitfulTensor, conversion_factors::NTuple{7, Number})
     dest = _similar(values(x))
-    return copyto!(dest, values.(x, (conversion_factors, )))
+    return copyto!(dest, map(y -> values(y, conversion_factors), x))
 end
 
 _similar(x) = similar(x)
@@ -198,6 +198,7 @@ end
     test_files("fastquantities")
     test_files("indexing")
     test_files("arithmetic")
+    test_files("broadcast")
     test_files("transcendental")
     test_files("generic")
     test_files("norm")

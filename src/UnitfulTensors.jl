@@ -13,9 +13,14 @@ using Base: delete_method, # types.jl
 
 using Base.IteratorsMD: flatten, split # tensor_product.jl
 
+using Base.Broadcast: AbstractArrayStyle, broadcasted, Broadcasted, combine_eltypes # broadcast.jl
+
+import Base.Broadcast: BroadcastStyle # broadcast.jl
+
 import Base: values, match, ==, # types.jl
              promote_rule, # promotion.jl
              IndexStyle, size, getindex, setindex!, _unsafe_getindex, reshape, _maybe_reshape, first, # indexing.jl
+             axes, similar, copy, copyto!, convert, # broadcast.jl
              parent, # adjtrans.jl
              ≈, +, -, *, \, /, ^, sqrt, # arithmetic.jl           
              exp ,  log ,  cis , # transcendental.jl
@@ -28,7 +33,7 @@ import Base: values, match, ==, # types.jl
             sincos, sincosd,
              iterate, getproperty, # factorization.jl
              show, replace_in_print_matrix, # show.jl
-             convert, vect, hcat, vcat, hvcat, hvcat_fill!, typed_hvcat # array_literals.jl
+             vect, hcat, vcat, hvcat, hvcat_fill!, typed_hvcat # array_literals.jl
 
 using LinearAlgebra: AbstractQ, # types.jl
                      Adjoint, Transpose, # adjtrans.jl
@@ -104,6 +109,7 @@ include("types.jl")
 include("promotion.jl")
 include("tensor_product.jl")
 include("indexing.jl")
+include("broadcast.jl")
 
 include("LinearAlgebra/adjtrans.jl")
 include("LinearAlgebra/is.jl")
