@@ -144,6 +144,28 @@ end
 Note that due to the tensor product structure of [`AxesDimensions`](@ref)
 dealing with dimensions is usually much easier than with numerical values.
 
+## Index notation
+
+You can use `@tensor` and `@tensoropt` macros from
+[TensorOperations.jl](https://github.com/Jutho/TensorOperations.jl)
+to write general tensor manipulations in index notation:
+
+```jldoctest; setup = :(using UnitfulTensors, TensorOperations)
+using UnitfulTensors, TensorOperations
+
+A = UnitfulTensor([1u"m/m" 2u"s"; 3u"s^-1" 4u"m/m"])
+
+@tensoropt B[i, j, k, l] := A[i, k] * A[l, j]
+@tensoropt C[i, j, k, l] := A[i, i'] * A[j', j] * A[k', k] * A[l, l'] * B[i', j', k', l']
+@tensoropt D[i, k] := C[i, j, k, j]
+
+# output
+
+2×2 UnitfulMatrix{Float64, SIDimensions, Matrix{Float64}, AxesDimensions{2, SIDimensions}}:
+       5735.0  8370.0 s
+ 12555.0 s^-1   18290.0
+```
+
 ## Pitfalls
 
 The types defined in this package store references to arrays of [`AbstractDimensions`](@ref).

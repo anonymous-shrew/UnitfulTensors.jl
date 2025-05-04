@@ -18,6 +18,7 @@ Currently it is experimental and mostly focused on linear algebra.
 - Rotations and reflections: rotate!, reflect!, givens
 - Solving Lyapunov and Sylvester equations
 - Support for sparse matrices
+- Index notation / Einstein summation with [TensorOperations.jl](https://github.com/Jutho/TensorOperations.jl)
 - Moderate runtime overhead, often negligible
 - Zero-overhead mode with [`units_off`](@ref): check the units on a small-scale problem > turn them off > proceed with a large-scale problem
 
@@ -27,7 +28,6 @@ Not implemented yet:
 Future plans:
 - Add support for frames of reference
 - Further optimizations: NoAxisDimensions, InverseAxisDimensions, memoization
-- [Tullio.jl](https://github.com/mcabbott/Tullio.jl)/[TensorCast.jl](https://github.com/mcabbott/TensorCast.jl) integration
 
 ## Basic usage
 

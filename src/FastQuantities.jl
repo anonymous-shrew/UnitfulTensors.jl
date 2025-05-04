@@ -122,6 +122,9 @@ value(x::Number) = x
 dimensions(x::Number) = NoDims
 # values(x::Number) works as intended because of the values(itr) = itr definition in Base
 
+values(::Type{<:AbstractUnitfulScalar{TV, TD}}) where {TV, TD} = TV
+dimensions(::Type{<:AbstractUnitfulScalar{TV, TD}}) where {TV, TD} = TD
+
 show(io::IO, x::AbstractUnitfulScalar) = show(io, value(x) * Unitful.upreferred(convert(Dimensions, dimensions(x))))
 show(io::IO, x::AbstractUnitfulScalar{<:Real}) = show(io, value(x) * Unitful.upreferred(convert(Dimensions, dimensions(x)))) # resolving ambiguity with DynamicQuantities
 

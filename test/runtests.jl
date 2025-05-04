@@ -180,7 +180,7 @@ v3d = randomUnitfulTensor((dims3d, ), (𝐋/𝐓)^10)
 v4 = randomUnitfulTensor((dims4, ), (𝐋/𝐓)^10)
 v1sqrt = A10wide[:, 1]
 
-
+A123 = randomUnitfulTensor((dims1, dims2, dims3))
 
 function test_files(names...)
     for name in names
@@ -204,4 +204,5 @@ end
     test_files("norm")
     test_files("factorizations")
     test_files("structured")
+    test_files("TensorOperations")
 end
