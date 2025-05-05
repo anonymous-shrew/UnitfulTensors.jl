@@ -153,7 +153,7 @@ to write general tensor manipulations in index notation:
 ```jldoctest; setup = :(using UnitfulTensors, TensorOperations)
 using UnitfulTensors, TensorOperations
 
-A = UnitfulTensor([1u"m/m" 2u"s"; 3u"s^-1" 4u"m/m"])
+A = UnitfulTensor([1 2u"s"; 3u"s^-1" 4])
 
 @tensoropt B[i, j, k, l] := A[i, k] * A[l, j]
 @tensoropt C[i, j, k, l] := A[i, i'] * A[j', j] * A[k', k] * A[l, l'] * B[i', j', k', l']
